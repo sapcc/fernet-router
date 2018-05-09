@@ -14,7 +14,9 @@ local function decode_fernet(data)
                 if decrypted then
                     local offset, decoded = msgpack.unpack(decrypted)
                     if offset == #decrypted then
-                        return decoded[2][2], resty_string.to_hex(decoded[4][2])
+                        local project_id = decoded[4][1] and resty_string.to_hex(decoded[4][2]) or decoded[4][2]
+                        local user_id = decoded[2][1] and resty_string.to_hex(decoded[2][2]) or decoded[2][2]
+                        return user_id, project_id
                     end
                 end
             end)
@@ -32,3 +34,4 @@ else
     ngx.log(ngx.NOTICE, "Redirecting to ", override)
     ngx.var.upstream = override
 end
+
